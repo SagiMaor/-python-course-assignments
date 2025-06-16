@@ -1,3 +1,5 @@
+import random
+
 codon_table = {
     'Phe': ['TTT', 'TTC'],
     'Leu': ['TTA', 'TTG', 'CTT', 'CTC', 'CTA', 'CTG'],
@@ -22,17 +24,20 @@ codon_table = {
     'STOP': ['TAA', 'TAG', 'TGA']
 }
 
-# Convert to codon -> amino acid mapping
+bases = ['A', 'C', 'T', 'G']
+random_sequence = ''.join(random.choices(bases, k=300))  # 300 bases = 100 codons
+
+with open("sequence.txt", "w") as f:
+    f.write(random_sequence)
+
 codon_to_amino = {}
 for amino, codons in codon_table.items():
     for codon in codons:
         codon_to_amino[codon] = amino
 
-# Read DNA sequence from file
 with open("sequence.txt") as f:
     sequence = f.read().strip().upper()
 
-# Count amino acids
 amino_counts = {}
 for i in range(0, len(sequence) - 2, 3):
     codon = sequence[i:i+3]
@@ -40,6 +45,5 @@ for i in range(0, len(sequence) - 2, 3):
         amino = codon_to_amino[codon]
         amino_counts[amino] = amino_counts.get(amino, 0) + 1
 
-# Print result
 for amino in sorted(amino_counts):
     print(f"{amino}: {amino_counts[amino]}")
