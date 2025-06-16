@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 
 TIME_FORMAT = "%H:%M"
+log_file = "examples/regex/timelog.log"  
 
 def parse_log(file_path):
     with open(file_path, 'r') as f:
@@ -55,3 +56,21 @@ def format_summary(summary_dict):
         lines.append(f"{activity:<25} {minutes:>3} minutes   {percent:>2}%")
 
     return lines
+
+parsed_days = parse_log(log_file)
+
+all_blocks = []
+report_lines = []
+
+for day in parsed_days:
+    blocks = compute_blocks(day)
+    all_blocks.append(blocks)
+    report_lines += [format_block(start, end, activity) for start, end, activity in blocks]
+    report_lines.append("")  # blank line between days
+
+summary = summarize_activities(all_blocks)
+report_lines += format_summary(summary)
+
+# Write to output file
+with open("examples/regex/timelog.txt", "w") as f:
+    f.write("\n".join(report_lines))
